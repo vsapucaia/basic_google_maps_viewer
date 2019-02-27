@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Overlay Map Types</title>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+
+    /*
+     * This demo illustrates the coordinate system used to display map tiles in the
+     * API.
+     *
+     * Tiles in Google Maps are numbered from the same origin as that for
+     * pixels. For Google's implementation of the Mercator projection, the origin
+     * tile is always at the northwest corner of the map, with x values increasing
+     * from west to east and y values increasing from north to south.
+     *
+     * Try panning and zooming the map to see how the coordinates change.
+     */
+
+    /** @constructor */
+    function CoordMapType() {
+        this.tileSize = new google.maps.Size(256, 256);
+    }
+
+    CoordMapType.prototype.getTile = function(coord, zoom, ownerDocument) {
+        mapbox_api_key = '?access_token=pk.eyJ1IjoiaG9tZWRheS1tYXBzIiwiYSI6ImNqODVrM2VoazBudncycXBsaXpnb2J5MmgifQ.XV9QZlbqaQ7zm_v0W9KEsg';
+        mapbox_domain = 'https://b.tiles.mapbox.com/v4/mapbox.mapbox-streets-v7,homeday-maps.7u320rrh/';
+
+        var div = ownerDocument.createElement('div'),
+            tileUrl = mapbox_domain + coord.x + '/' + coord.y + '/' + zoom + '.vector.pbf' + mapbox_api_key;
+
+        div.innerHTML = coord;
+        div.style.width = this.tileSize.width + 'px';
+        div.style.height = this.tileSize.height + 'px';
+        div.style.fontSize = '10';
+        div.style.borderStyle = 'solid';
+        div.style.borderWidth = '1px';
+        div.style.borderColor = '#AAAAAA';
+        return div;
+    };
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 10,
+            center: {lat: 41.850, lng: -87.650}
+        });
+
+        // Insert this overlay map type as the first overlay map type at
+        // position 0. Note that all overlay map types appear on top of
+        // their parent base map.
+        map.overlayMapTypes.insertAt(
+            0, new CoordMapType(new google.maps.Size(256, 256)));
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCpoSpC8Ec4vCkH1CxaFMjG6mRMcHWHsk&callback=initMap">
+</script>
+</body>
+</html>
